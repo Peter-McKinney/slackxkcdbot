@@ -1,5 +1,5 @@
 {
   "name" : "botname",
-  "token" : "bottoken"
+  "token" : "bottoken",
   "devchannel" : "name of channel for dev testing"
 }
