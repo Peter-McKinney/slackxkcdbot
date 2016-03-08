@@ -9,7 +9,6 @@
   "author": "pmckinney",
   "license": "ISC",
   "dependencies": {
-    "slackbots": "^0.5.1",
-    "xml2js": "^0.4.16"
+    "slackbots": "^0.5.1"
   }
 }

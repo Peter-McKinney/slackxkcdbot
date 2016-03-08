@@ -51,3 +51,7 @@ node*
 
 #credentials/configuration
 *info.json
+
+#other bots
+coolkidsbot.js
+cthulhubot.js

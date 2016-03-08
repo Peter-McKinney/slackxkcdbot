@@ -17,11 +17,12 @@ var bot = new SlackBot({
   token: config.token
 });
 
-bot.on('start', function(){
-  bot.postMessage(config.devchannel,
-    'I am alive!',
-    params);
-});
+//post a message on start to a channel defined as the devchannel.
+// bot.on('start', function(){
+//   bot.postMessage(config.devchannel,
+//     'I am alive!',
+//     params);
+// });
 
 bot.on('message', function(message) {
   if(message.text == 'xkcd'){
@@ -33,6 +34,7 @@ bot.on('message', function(message) {
         var xkcdInfo = JSON.parse(body);
         var id = Math.floor((Math.random() * xkcdInfo.num) + 1);
 
+        //http://xkcd.com/404 displays a 404 - Not Found error page
         while(id == 404){
           id = Math.floor((Math.random() * xkcdInfo.num) + 1);
         }
