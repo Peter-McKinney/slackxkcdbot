@@ -8,7 +8,7 @@ fs = require('fs');
 
 var config = JSON.parse(fs.readFileSync(configurationFile));
 
-var bot = new SlackBot({
+var cthulhu = new SlackBot({
   name: config.name,
   token: config.token
 });
@@ -17,14 +17,25 @@ var params = {
   icon_emoji: ':cthulhu:'
 };
 
-bot.on('start', function(){
-  bot.postMessage(config.devchannel,
+cthulhu.on('start', function(){
+  cthulhu.postMessage(config.devchannel,
     'Ph\'nglui mglw\'nafh',
     params);
 });
 
-bot.on('message', function(message){
-  if(message.text == 'cthulhu'){
-    
+cthulhu.on('message', function(message){
+  var params = {
+    icon_emoji: ':cthulhu:'
+  };
+
+  if(message.text == 'tableflip'){
+    cthulhu.postMessage(message.channel,
+      '(╯°□°)╯︵ ┻━┻',
+      params);
+  }
+  else if(message.text == 'unflip'){
+    cthulhu.postMessage(message.channel,
+      '┬─┬﻿ ノ( ゜-゜ノ)',
+      params);
   }
 });

@@ -3,12 +3,8 @@
 var SlackBot = require('slackbots');
 var fs, configurationFile;
 
-configurationFile = 'xkcdinfo.json';
+configurationFile = 'coolkidsbotinfo.json';
 fs = require('fs');
-
-var params = {
-  icon_emoji: ':xkcd:'
-};
 
 var config = JSON.parse(fs.readFileSync(configurationFile));
 
@@ -18,9 +14,8 @@ var bot = new SlackBot({
 });
 
 bot.on('start', function(){
-  bot.postMessage(config.devchannel,
-    'I am alive!',
-    params);
+  bot.postMessage("random",
+    'I am alive!');
 });
 
 bot.on('message', function(message) {
@@ -47,11 +42,16 @@ bot.on('message', function(message) {
   }
 });
 
+
 function requestComic(xkcdbot, message, url){
   require('request')(url,function(error,result,body){
     try{
       console.log(body);
       var comic = JSON.parse(body);
+
+      var params = {
+        icon_emoji: ':smiling_imp: '
+      };
 
       xkcdbot.postMessage(message.channel,
         comic.title + '\n' + comic.img,
