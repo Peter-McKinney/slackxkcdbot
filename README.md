@@ -2,7 +2,7 @@
 A simple slack bot that posts a random xkcd comic to a slack channel.
 
 # Usage
-You must have a file named xkcdinfo.json which contains the following information:
+We must have a file named xkcdinfo.json which contains the following information:
 
 ```json
 {
@@ -12,3 +12,15 @@ You must have a file named xkcdinfo.json which contains the following informatio
 }
 ```
 
+I am using a custom :xkcd: emoji. We will have to either create a custom emoji, edit the params to use an existing default slack emoji, or remove the params var. 
+
+```javascript
+var params = {
+  icon_emoji: ':xkcd:'
+};
+
+xkcdbot.postMessage(message.channel,
+  comic.title + '\n' + comic.img,
+  params); //remove the params argument if we are not using an emoji.
+
+```
