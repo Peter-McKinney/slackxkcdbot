@@ -17,6 +17,34 @@ var bot = new SlackBot({
   token: config.token
 });
 
+var snakebot = new SlackBot({
+  name: "snake",
+  token: config.snaketoken
+});
+
+
+//listen for snakescores string and post a message to the channel including the current scores
+//retrieve from http://psm-snakescores.rhcloud.com/scores
+snakebot.on('message', function(message){
+  if(message.text == 'snakescores'){
+    var url = 'http://psm-snakescores.rhcloud.com/scores';
+
+    require('request')(url, function(error, response, body){
+      try{
+        var scores = JSON.parse(body);
+        var snakeparams = {
+          icon_emoji: ':snakebot:'
+        };
+
+        snakebot.postMessage(message.channel, formatScores(scores) , snakeparams);
+      }
+      catch(e){
+        console.log(e);
+      }
+    });
+  }
+});
+
 //post a message on start to a channel defined as the devchannel.
 // bot.on('start', function(){
 //   bot.postMessage(config.devchannel,
@@ -48,6 +76,22 @@ bot.on('message', function(message) {
     });
   }
 });
+
+//I wish I could use a console table module but slack hated it.
+//I hate this function but it formats output for slack
+function formatScores(scores){
+  if(scores == undefined || scores.length == 0){
+    throw "unable to format scores";
+  }
+  var formattedScores = '';
+
+  for(var i = 0; i < scores.length; i++){
+    var separator = (i+1) >= 10 ? ' ' : '  ';
+    formattedScores += '`' + (i+1) + '.' + separator + scores[i].user + ' ' + scores[i].value + '`\n';
+  }
+
+  return formattedScores;
+}
 
 function requestComic(xkcdbot, message, url){
   require('request')(url,function(error,result,body){
