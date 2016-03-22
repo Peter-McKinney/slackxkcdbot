@@ -1,5 +1,5 @@
 # slackxkcdbot
-A simple slack bot that posts a random xkcd comic to a slack channel.
+A simple slack bot that posts a random xkcd comic to a slack channel. This uses the slackbots project located here: https://github.com/mishk0/slack-bot-api
 
 # Usage
 We must have a file named xkcdinfo.json which contains the following information:
