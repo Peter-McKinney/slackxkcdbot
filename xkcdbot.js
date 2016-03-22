@@ -78,7 +78,7 @@ bot.on('message', function(message) {
 });
 
 //I wish I could use a console table module but slack hated it.
-//I hate this function but it formats output for slack
+//formats the scores in with a tabular look.
 function formatScores(scores){
   if(scores == undefined || scores.length == 0){
     throw "unable to format scores";
