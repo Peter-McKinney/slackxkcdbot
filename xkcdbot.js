@@ -18,7 +18,7 @@ var bot = new SlackBot({
 });
 
 var snakebot = new SlackBot({
-  name: "snake",
+  name: "snek",
   token: config.snaketoken
 });
 
