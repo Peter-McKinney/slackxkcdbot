@@ -6,10 +6,6 @@ var fs, configurationFile;
 configurationFile = 'xkcdinfo.json';
 fs = require('fs');
 
-var params = {
-  icon_emoji: ':xkcd:'
-};
-
 var config = JSON.parse(fs.readFileSync(configurationFile));
 
 var xkcdbot = new SlackBot({
@@ -27,6 +23,18 @@ var cthulhubot = new SlackBot({
   token: config.cthulhutoken
 });
 
+var cthulhuparams = {
+  icon_emoji: ':cthulhu:'
+};
+
+var snakeparams = {
+  icon_emoji: ':snakebot:'
+};
+
+var params = {
+  icon_emoji: ':xkcd:'
+};
+
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
 //retrieve from http://psm-snakescores.rhcloud.com/scores
@@ -37,9 +45,6 @@ snakebot.on('message', function(message){
     require('request')(url, function(error, response, body){
       try{
         var scores = JSON.parse(body);
-        var snakeparams = {
-          icon_emoji: ':snakebot:'
-        };
 
         snakebot.postMessage(message.channel, formatScores(scores) , snakeparams);
       }
@@ -48,15 +53,17 @@ snakebot.on('message', function(message){
       }
     });
   }
+  else if(message.text == 'bot roll call'){
+    snakebot.postMessage(message.channel, 'I\'m a snek.', snakeparams);
+    cthulhubot.postMessage(message.channel, 'Ph\'nglui mglw\'nafh', cthulhuparams);
+    xkcdbot.postMessage(message.channel, 'I am alive.',params);
+  }
 });
 
 
 var countTopics = [];
 //listen for cthulhu commands
 cthulhubot.on('message', function(message){
-  var cthulhuparams = {
-    icon_emoji: ':cthulhu:'
-  };
 
   if(message.text == 'tableflip'){
     cthulhubot.postMessage(message.channel,
@@ -69,39 +76,44 @@ cthulhubot.on('message', function(message){
       cthulhuparams);
   }
   else if(message.text != undefined && message.text.slice(-2) == '++'){
-    var seen = false;
-    var score = 1;
-    var topic = message.text.slice(0, message.text.length - 2);
-
-    for(var i = 0; i < countTopics.length; i++){
-      if(countTopics[i].name == topic){
-        score = ++countTopics[i].count;
-        seen = true;
-        break;
-      }
-    }
-
-    if(seen == false){
-      countTopics.push({name: topic, count: 1});
-    }
-
     cthulhubot.postMessage(message.channel,
-      'The current score for *_' + topic.toUpperCase() + '_* is ' + score,
+      'Count\'s are all kinds of broken right now...:(',
       cthulhuparams);
   }
-  else if(message.text != undefined && message.text.indexOf('?counts') > -1){
-    var formattedCounts = '';
-    for(var i = 0; i < countTopics.length; i++){
-      formattedCounts += countTopics[i].name + ' | ' + countTopics[i].count + '\n';
-    }
 
-    cthulhubot.postMessage(message.channel,
-      formattedCounts,
-      cthulhuparams);
-  }
-  else if(message.text != undefined && message.text == '!clear'){
-    countTopics = [];
-  }
+  //   var seen = false;
+  //   var score = 1;
+  //   var topic = message.text.slice(0, message.text.length - 2);
+
+  //   for(var i = 0; i < countTopics.length; i++){
+  //     if(countTopics[i].name == topic){
+  //       score = ++countTopics[i].count;
+  //       seen = true;
+  //       break;
+  //     }
+  //   }
+
+  //   if(seen == false){
+  //     countTopics.push({name: topic, count: 1});
+  //   }
+
+  //   cthulhubot.postMessage(message.channel,
+  //     'The current score for *_' + topic.toUpperCase() + '_* is ' + score,
+  //     cthulhuparams);
+  // }
+  // else if(message.text != undefined && message.text.indexOf('?counts') > -1){
+  //   var formattedCounts = '';
+  //   for(var i = 0; i < countTopics.length; i++){
+  //     formattedCounts += countTopics[i].name + ' | ' + countTopics[i].count + '\n';
+  //   }
+
+  //   cthulhubot.postMessage(message.channel,
+  //     formattedCounts,
+  //     cthulhuparams);
+  // }
+  // else if(message.text != undefined && message.text == '!clear'){
+  //   countTopics = [];
+  // }
 });
 
 //listen for xkcd command in any channel that the bot has been invited to.
