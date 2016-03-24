@@ -12,7 +12,7 @@ var params = {
 
 var config = JSON.parse(fs.readFileSync(configurationFile));
 
-var bot = new SlackBot({
+var xkcdbot = new SlackBot({
   name: config.name,
   token: config.token
 });
@@ -22,6 +22,10 @@ var snakebot = new SlackBot({
   token: config.snaketoken
 });
 
+var cthulhubot = new SlackBot({
+  name: "cthulhu",
+  token: config.cthulhutoken
+});
 
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
@@ -46,15 +50,62 @@ snakebot.on('message', function(message){
   }
 });
 
-//post a message on start to a channel defined as the devchannel.
-// bot.on('start', function(){
-//   bot.postMessage(config.devchannel,
-//     'I am alive!',
-//     params);
-// });
+
+var countTopics = [];
+//listen for cthulhu commands
+cthulhubot.on('message', function(message){
+  var cthulhuparams = {
+    icon_emoji: ':cthulhu:'
+  };
+
+  if(message.text == 'tableflip'){
+    cthulhubot.postMessage(message.channel,
+      '(╯°□°)╯︵ ┻━┻',
+      cthulhuparams);
+  }
+  else if(message.text == 'unflip'){
+    cthulhubot.postMessage(message.channel,
+      '┬─┬﻿ ノ( ゜-゜ノ)',
+      cthulhuparams);
+  }
+  else if(message.text != undefined && message.text.slice(-2) == '++'){
+    var seen = false;
+    var score = 1;
+    var topic = message.text.slice(0, message.text.length - 2);
+
+    for(var i = 0; i < countTopics.length; i++){
+      if(countTopics[i].name == topic){
+        score = ++countTopics[i].count;
+        seen = true;
+        break;
+      }
+    }
+
+    if(seen == false){
+      countTopics.push({name: topic, count: 1});
+    }
+
+    cthulhubot.postMessage(message.channel,
+      'The current score for *_' + topic.toUpperCase() + '_* is ' + score,
+      cthulhuparams);
+  }
+  else if(message.text != undefined && message.text.indexOf('?counts') > -1){
+    var formattedCounts = '';
+    for(var i = 0; i < countTopics.length; i++){
+      formattedCounts += countTopics[i].name + ' | ' + countTopics[i].count + '\n';
+    }
+
+    cthulhubot.postMessage(message.channel,
+      formattedCounts,
+      cthulhuparams);
+  }
+  else if(message.text != undefined && message.text == '!clear'){
+    countTopics = [];
+  }
+});
 
 //listen for xkcd command in any channel that the bot has been invited to.
-bot.on('message', function(message) {
+xkcdbot.on('message', function(message) {
   if(message.text == 'xkcd'){
     var url = 'http://xkcd.com/';
     var infoUrl = url + 'info.0.json';
@@ -70,7 +121,7 @@ bot.on('message', function(message) {
         }
 
         url += id + '/info.0.json';
-        requestComic(bot,message,url);
+        requestComic(xkcdbot,message,url);
       }
       catch(e){
         console.log(e);
