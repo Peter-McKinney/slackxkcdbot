@@ -53,6 +53,7 @@ snakebot.on('message', function(message){
 //     params);
 // });
 
+//listen for xkcd command in any channel that the bot has been invited to.
 bot.on('message', function(message) {
   if(message.text == 'xkcd'){
     var url = 'http://xkcd.com/';
@@ -94,6 +95,9 @@ function formatScores(scores){
   return formattedScores;
 }
 
+//uses the request module to get the json for the comic at the url
+//and uses the xkcdbot to post a message to the channel where the
+//message was received from.
 function requestComic(xkcdbot, message, url){
   require('request')(url,function(error,result,body){
     try{
