@@ -23,10 +23,11 @@ var snakebot = new SlackBot({
 });
 
 
+var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
 //retrieve from http://psm-snakescores.rhcloud.com/scores
 snakebot.on('message', function(message){
-  if(message.text == 'snakescores'){
+  if(snakecommands.indexOf(message.text) > -1){
     var url = 'http://psm-snakescores.rhcloud.com/scores';
 
     require('request')(url, function(error, response, body){
