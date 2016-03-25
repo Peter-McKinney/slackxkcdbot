@@ -76,44 +76,39 @@ cthulhubot.on('message', function(message){
       cthulhuparams);
   }
   else if(message.text != undefined && message.text.slice(-2) == '++'){
+    var seen = false;
+    var score = 1;
+    var topic = message.text.slice(0, message.text.length - 2);
+
+    for(var i = 0; i < countTopics.length; i++){
+      if(countTopics[i].name == topic){
+        score = ++countTopics[i].count;
+        seen = true;
+        break;
+      }
+    }
+
+    if(seen == false){
+      countTopics.push({name: topic, count: 1});
+    }
+
     cthulhubot.postMessage(message.channel,
-      'Count\'s are all kinds of broken right now...:(',
+      'The current score for *_' + topic.toUpperCase() + '_* is ' + score,
       cthulhuparams);
   }
+  else if(message.text != undefined && message.text.indexOf('?counts') > -1){
+    var formattedCounts = '';
+    for(var i = 0; i < countTopics.length; i++){
+      formattedCounts += countTopics[i].name + ' | ' + countTopics[i].count + '\n';
+    }
 
-  //   var seen = false;
-  //   var score = 1;
-  //   var topic = message.text.slice(0, message.text.length - 2);
-
-  //   for(var i = 0; i < countTopics.length; i++){
-  //     if(countTopics[i].name == topic){
-  //       score = ++countTopics[i].count;
-  //       seen = true;
-  //       break;
-  //     }
-  //   }
-
-  //   if(seen == false){
-  //     countTopics.push({name: topic, count: 1});
-  //   }
-
-  //   cthulhubot.postMessage(message.channel,
-  //     'The current score for *_' + topic.toUpperCase() + '_* is ' + score,
-  //     cthulhuparams);
-  // }
-  // else if(message.text != undefined && message.text.indexOf('?counts') > -1){
-  //   var formattedCounts = '';
-  //   for(var i = 0; i < countTopics.length; i++){
-  //     formattedCounts += countTopics[i].name + ' | ' + countTopics[i].count + '\n';
-  //   }
-
-  //   cthulhubot.postMessage(message.channel,
-  //     formattedCounts,
-  //     cthulhuparams);
-  // }
-  // else if(message.text != undefined && message.text == '!clear'){
-  //   countTopics = [];
-  // }
+    cthulhubot.postMessage(message.channel,
+      formattedCounts,
+      cthulhuparams);
+  }
+  else if(message.text != undefined && message.text == '!clear'){
+    countTopics = [];
+  }
 });
 
 //listen for xkcd command in any channel that the bot has been invited to.
