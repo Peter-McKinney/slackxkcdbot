@@ -19,6 +19,11 @@ var params = {
   icon_emoji: ':xkcd:'
 };
 
+var xkcdbot = new SlackBot({
+  name: config.name,
+  token: config.token
+});
+
 //xkcdbot - returns a random xkcd comic.
 //listen for xkcd command in any channel that the bot has been invited to.
 xkcdbot.on('message', function(message) {
@@ -45,7 +50,6 @@ xkcdbot.on('message', function(message) {
     });
   }
 });
-
 
 //uses the request module to get the json for the comic at the url
 //and uses the xkcdbot to post a message to the channel where the
