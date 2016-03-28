@@ -1,6 +1,7 @@
 'use strict'
 
 var SlackBot = require('slackbots');
+var Promise = require('promise');
 var fs, configurationFile;
 
 configurationFile = 'xkcdinfo.json';
@@ -57,6 +58,13 @@ snakebot.on('message', function(message){
     snakebot.postMessage(message.channel, 'I\'m a snek.', snakeparams);
     cthulhubot.postMessage(message.channel, 'Ph\'nglui mglw\'nafh', cthulhuparams);
     xkcdbot.postMessage(message.channel, 'I am alive.',params);
+  }
+  else if(message.text == 'number1snake'){
+    var scorePromise = requestSnakeScores();
+    //call then method for when promise is resolved
+    scorePromise.then(function(scores){
+      snakebot.postMessage(message.channel, 'First Place goes to: *' + scores[0].user + '* with *' + scores[0].value + '* points.', snakeparams);
+    });
   }
 });
 
@@ -169,5 +177,27 @@ function requestComic(xkcdbot, message, url){
     catch(e){
       console.log('unable to send message');
     }
-  })
+  });
+}
+
+function requestSnakeScores(){
+  var promise = new Promise(function (resolve, reject){
+    var url = 'http://psm-snakescores.rhcloud.com/scores';
+
+    require('request')(url, function(error, response, body){
+      if(error) reject(error);
+
+      try{
+        var scores = JSON.parse(body);
+        console.log(scores);
+        //resolve the promise as scores data
+        resolve(scores);
+      }
+      catch(e){
+        console.log(e);
+      }
+    });
+  });
+  //return the promise
+  return promise;
 }

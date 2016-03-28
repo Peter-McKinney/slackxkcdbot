@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "easy-table": "^1.0.0",
-    "slackbots": "^0.5.1"
+    "promise": "^7.1.1",
+    "slackbots": "^0.5.1",
+    "util": "^0.10.3"
   }
 }
