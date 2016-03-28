@@ -19,8 +19,31 @@ var params = {
   icon_emoji: ':xkcd:'
 };
 
-xkcdbot.postMessage(message.channel,
-  comic.title + '\n' + comic.img,
-  params); //remove the params argument if we are not using an emoji.
+//xkcdbot - returns a random xkcd comic.
+//listen for xkcd command in any channel that the bot has been invited to.
+xkcdbot.on('message', function(message) {
+  if(message.text == 'xkcd'){
+    var url = 'http://xkcd.com/';
+    var infoUrl = url + 'info.0.json';
+
+    require('request')(infoUrl, function(error,response,body){
+      try{
+        var xkcdInfo = JSON.parse(body);
+        var id = Math.floor((Math.random() * xkcdInfo.num) + 1);
+
+        //http://xkcd.com/404 displays a 404 - Not Found error page
+        while(id == 404){
+          id = Math.floor((Math.random() * xkcdInfo.num) + 1);
+        }
+
+        url += id + '/info.0.json';
+        requestComic(xkcdbot,message,url);
+      }
+      catch(e){
+        console.log(e);
+      }
+    });
+  }
+});
 
 ```
