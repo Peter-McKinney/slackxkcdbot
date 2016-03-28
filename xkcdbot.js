@@ -36,6 +36,8 @@ var params = {
   icon_emoji: ':xkcd:'
 };
 
+
+//snakebot - displays the current snake scores from the snake game api
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
 //retrieve from http://psm-snakescores.rhcloud.com/scores
@@ -68,7 +70,7 @@ snakebot.on('message', function(message){
   }
 });
 
-
+//cthulhu - various joke commands and the ever broken 'counts' command.
 var countTopics = [];
 //listen for cthulhu commands
 cthulhubot.on('message', function(message){
@@ -86,7 +88,7 @@ cthulhubot.on('message', function(message){
   else if(message.text != undefined && message.text.slice(-2) == '++'){
     var seen = false;
     var score = 1;
-    var topic = message.text.slice(0, message.text.length - 2);
+    var topic = message.text.slice(0, message.text.length - 2).toUpperCase();
 
     for(var i = 0; i < countTopics.length; i++){
       if(countTopics[i].name == topic){
@@ -119,6 +121,7 @@ cthulhubot.on('message', function(message){
   }
 });
 
+//xkcdbot - returns a random xkcd comic.
 //listen for xkcd command in any channel that the bot has been invited to.
 xkcdbot.on('message', function(message) {
   if(message.text == 'xkcd'){
@@ -146,7 +149,7 @@ xkcdbot.on('message', function(message) {
 });
 
 //I wish I could use a console table module but slack hated it.
-//formats the scores in with a tabular look.
+//formats the scores in slack with a tabular look.
 function formatScores(scores){
   if(scores == undefined || scores.length == 0){
     throw "unable to format scores";
@@ -180,6 +183,8 @@ function requestComic(xkcdbot, message, url){
   });
 }
 
+//uses the Promise module to return an http promise. The promise will
+//resolve as scores data (assuming no error).
 function requestSnakeScores(){
   var promise = new Promise(function (resolve, reject){
     var url = 'http://psm-snakescores.rhcloud.com/scores';
