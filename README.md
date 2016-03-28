@@ -46,4 +46,23 @@ xkcdbot.on('message', function(message) {
   }
 });
 
+
+//uses the request module to get the json for the comic at the url
+//and uses the xkcdbot to post a message to the channel where the
+//message was received from.
+function requestComic(xkcdbot, message, url){
+  require('request')(url,function(error,result,body){
+    try{
+      console.log(body);
+      var comic = JSON.parse(body);
+
+      xkcdbot.postMessage(message.channel,
+        comic.title + '\n' + comic.img,
+        params);
+    }
+    catch(e){
+      console.log('unable to send message');
+    }
+  });
+}
 ```
