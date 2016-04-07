@@ -36,7 +36,6 @@ var params = {
   icon_emoji: ':xkcd:'
 };
 
-
 //snakebot - displays the current snake scores from the snake game api
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
@@ -60,6 +59,12 @@ snakebot.on('message', function(message){
     snakebot.postMessage(message.channel, 'I\'m a snek.', snakeparams);
     cthulhubot.postMessage(message.channel, 'Ph\'nglui mglw\'nafh', cthulhuparams);
     xkcdbot.postMessage(message.channel, 'I am alive.',params);
+  }
+  else if(message.text == 'bot info'){
+    snakebot.postMessage(message.channel, 'Commands to show high scores from Eric\'s snake game.\n' + snakecommands
+      + '\nTo display the first score use: number1snake',snakeparams);
+    cthulhubot.postMessage(message.channel, 'tableflip, unflip, [argument]++, ?counts\n', cthulhuparams);
+    xkcdbot.postMessage(message.channel, 'Type xkcd to display a random comic in a channel.', params);
   }
   else if(message.text == 'number1snake'){
     var scorePromise = requestSnakeScores();
