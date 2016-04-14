@@ -2,6 +2,7 @@
 
 var SlackBot = require('slackbots');
 var Promise = require('promise');
+var util = require('util');
 var fs, configurationFile;
 
 configurationFile = 'xkcdinfo.json';
@@ -35,6 +36,10 @@ var snakeparams = {
 var params = {
   icon_emoji: ':xkcd:'
 };
+
+var cwparams = {
+  icon_emoji: ':cw:'
+}
 
 //snakebot - displays the current snake scores from the snake game api
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
@@ -122,6 +127,22 @@ cthulhubot.on('message', function(message){
   }
   else if(message.text != undefined && message.text == '!clear'){
     countTopics = [];
+  }
+  else if(message.text != undefined && message.text[0] == '#' && message.text.length > 1){
+    var ticket = message.text.substr(1);
+
+    if(!ticket.match(/\b\d{5}\b/g)){
+      cthulhubot.postMessage(message.channel,
+        'I require a 5 digit ticket number.',
+        cwparams);
+        return;
+    }
+
+    var ticketUrl = util.format(config.cwurl, ticket);
+
+    cthulhubot.postMessage(message.channel,
+    ticketUrl,
+    cwparams);
   }
 });
 
