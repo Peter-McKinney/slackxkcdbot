@@ -42,17 +42,10 @@ var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //retrieve from http://psm-snakescores.rhcloud.com/scores
 snakebot.on('message', function(message){
   if(snakecommands.indexOf(message.text) > -1){
-    var url = 'http://psm-snakescores.rhcloud.com/scores';
-
-    require('request')(url, function(error, response, body){
-      try{
-        var scores = JSON.parse(body);
-
-        snakebot.postMessage(message.channel, formatScores(scores) , snakeparams);
-      }
-      catch(e){
-        console.log(e);
-      }
+    var scoresPromise = requestSnakeScores();
+    //resolved promise
+    scoresPromise.then(function(scores){
+      snakebot.postMessage(message.channel, formatScores(scores) , snakeparams);
     });
   }
   else if(message.text == 'bot roll call'){
@@ -62,15 +55,22 @@ snakebot.on('message', function(message){
   }
   else if(message.text == 'bot info'){
     snakebot.postMessage(message.channel, 'Commands to show high scores from Eric\'s snake game.\n' + snakecommands
-      + '\nTo display the first score use: number1snake',snakeparams);
+      + '\nTo display the first score use: 1|snake',snakeparams);
     cthulhubot.postMessage(message.channel, 'tableflip, unflip, [argument]++, ?counts\n', cthulhuparams);
     xkcdbot.postMessage(message.channel, 'Type xkcd to display a random comic in a channel.', params);
   }
-  else if(message.text == 'number1snake'){
+  else if(message.text != undefined && message.text.match(/^[0-9]+[|](snake)+$/gi)){
+    var index = message.text.split('|')[0] - 1;
     var scorePromise = requestSnakeScores();
+
     //call then method for when promise is resolved
     scorePromise.then(function(scores){
-      snakebot.postMessage(message.channel, 'First Place goes to: *' + scores[0].user + '* with *' + scores[0].value + '* points.', snakeparams);
+      if(index < scores.length){
+        snakebot.postMessage(message.channel, ordinal_suffix_of(index+1) + ' place goes to: *' + scores[index].user + '* with *' + scores[index].value + '* points.', snakeparams);
+      }
+      else {
+        snakebot.postMessage(message.channel, 'No such score exists.', snakeparams);
+      }
     });
   }
 });
@@ -154,7 +154,7 @@ xkcdbot.on('message', function(message) {
 });
 
 //I wish I could use a console table module but slack hated it.
-//formats the scores in slack with a tabular look.
+//format the scores in slack with a tabular look.
 function formatScores(scores){
   if(scores == undefined || scores.length == 0){
     throw "unable to format scores";
@@ -188,12 +188,32 @@ function requestComic(xkcdbot, message, url){
   });
 }
 
+// //uses the request module and http promise module to retrieve the
+// //xkcd comic at the url. Returns the JSON comic object.
+// function requestComic(url){
+//   var promise = new Promise(function (resolve, reject){
+//     require('request')(url, function(error, response, body){
+//       if(error) reject(error);
+//
+//       try{
+//         console.log(body);
+//         var comic = JSON.parse(body);
+//
+//         resolve(comic);
+//       }
+//       catch(e){
+//         console.log('unable to retrieve comic');
+//       }
+//     })
+//   });
+//   return promise;
+// }
+
 //uses the Promise module to return an http promise. The promise will
 //resolve as scores data (assuming no error).
 function requestSnakeScores(){
   var promise = new Promise(function (resolve, reject){
     var url = 'http://psm-snakescores.rhcloud.com/scores';
-
     require('request')(url, function(error, response, body){
       if(error) reject(error);
 
@@ -210,4 +230,20 @@ function requestSnakeScores(){
   });
   //return the promise
   return promise;
+}
+
+//attach nd, st, rd, th for string formatting
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
 }
