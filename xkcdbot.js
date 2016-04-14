@@ -39,7 +39,6 @@ var params = {
 //snakebot - displays the current snake scores from the snake game api
 var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
-//retrieve from http://psm-snakescores.rhcloud.com/scores
 snakebot.on('message', function(message){
   if(snakecommands.indexOf(message.text) > -1){
     var scoresPromise = requestSnakeScores();
@@ -213,7 +212,7 @@ function requestComic(xkcdbot, message, url){
 //resolve as scores data (assuming no error).
 function requestSnakeScores(){
   var promise = new Promise(function (resolve, reject){
-    var url = 'http://psm-snakescores.rhcloud.com/scores';
+    var url = config.snakeurl;
     require('request')(url, function(error, response, body){
       if(error) reject(error);
 
