@@ -42,7 +42,7 @@ var cwparams = {
 }
 
 //snakebot - displays the current snake scores from the snake game api
-var snakecommands = ['snakescores','snek','snekscores','ekan', 'arbok'];
+var snakecommands = ['snakescores','snek','snekscores','ekans', 'arbok'];
 //listen for snakescores string and post a message to the channel including the current scores
 snakebot.on('message', function(message){
   if(snakecommands.indexOf(message.text) > -1){
@@ -70,7 +70,7 @@ snakebot.on('message', function(message){
     //call then method for when promise is resolved
     scorePromise.then(function(scores){
       if(index < scores.length){
-        snakebot.postMessage(message.channel, ordinal_suffix_of(index+1) + ' place goes to: *' + scores[index].user + '* with *' + scores[index].value + '* points.', snakeparams);
+        snakebot.postMessage(message.channel, ordinalSuffixOf(index+1) + ' place goes to: *' + scores[index].user + '* with *' + scores[index].value + '* points.', snakeparams);
       }
       else {
         snakebot.postMessage(message.channel, 'No such score exists.', snakeparams);
@@ -130,10 +130,10 @@ cthulhubot.on('message', function(message){
   }
   else if(message.text != undefined && message.text[0] == '#' && message.text.length > 1){
     var ticket = message.text.substr(1);
-
-    if(!ticket.match(/\b\d{5}\b/g)){
+    //get the max connectwise ticket number somehow?
+    if(!ticket.match(/\b\d{4,5}\b/g) || parseInt(ticket) < 1000){
       cthulhubot.postMessage(message.channel,
-        'I require a 5 digit ticket number.',
+        'I require a ticket number with 4 digits or more and 1000 or greater.',
         cwparams);
         return;
     }
@@ -253,7 +253,7 @@ function requestSnakeScores(){
 }
 
 //attach nd, st, rd, th for string formatting
-function ordinal_suffix_of(i) {
+function ordinalSuffixOf(i) {
     var j = i % 10,
         k = i % 100;
     if (j == 1 && k != 11) {
