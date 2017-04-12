@@ -5,7 +5,8 @@ var Promise = require('promise');
 var util = require('util');
 var express = require('express');
 var app = express();
-console.log(process.env);
+var port = process.env.PORT || 3000;
+
 var xkcdbot = new SlackBot({
   name: process.env.TOKEN,
   token: process.env.NAME
@@ -87,6 +88,6 @@ app.get('/', function(req,res){
   res.send('Slack bot app is running...');
 });
 
-app.listen(443,function(){
-  console.log('Listing on port 443')
+app.listen(port, function(){
+  console.log('Listing on port' + port)
 });
