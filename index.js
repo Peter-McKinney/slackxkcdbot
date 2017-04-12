@@ -8,8 +8,8 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 var xkcdbot = new SlackBot({
-  name: process.env.TOKEN,
-  token: process.env.NAME
+  token: process.env.TOKEN || '',
+  name: process.env.NAME || 'xkcd'
 });
 
 var params = {
@@ -89,5 +89,5 @@ app.get('/', function(req,res){
 });
 
 app.listen(port, function(){
-  console.log('Listing on port' + port)
+  console.log('Listing on port ' + port)
 });
