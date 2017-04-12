@@ -53,7 +53,7 @@ function requestComic(xkcdbot, message, url){
       var comic = JSON.parse(body);
 
       xkcdbot.postMessage(message.channel,
-        comic.title + '\n' + comic.img,
+        comic.title + '\n' + comic.img + '\n' + comic.alt,
         params);
     }
     catch(e){
