@@ -5,10 +5,10 @@ var Promise = require('promise');
 var util = require('util');
 var express = require('express');
 var app = express();
-
+console.log(process.env);
 var xkcdbot = new SlackBot({
   name: process.env.TOKEN,
-  token: process.env.name
+  token: process.env.NAME
 });
 
 var params = {
@@ -88,5 +88,5 @@ app.get('/', function(req,res){
 });
 
 app.listen(443,function(){
-  console.log('Listing on port 80')
+  console.log('Listing on port 443')
 });
