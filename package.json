@@ -2,7 +2,7 @@
   "name": "slackxckdbot",
   "version": "1.0.0",
   "description": "A bot that posts xkcd comics in slack channels",
-  "main": "xkcdbot.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
