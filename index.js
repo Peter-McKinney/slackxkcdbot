@@ -5,7 +5,7 @@ var Promise = require('promise');
 var util = require('util');
 var express = require('express');
 var app = express();
-console.log(process.env);
+
 var xkcdbot = new SlackBot({
   name: process.env.TOKEN,
   token: process.env.name
