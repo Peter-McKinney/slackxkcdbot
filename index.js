@@ -3,16 +3,10 @@
 var SlackBot = require('slackbots');
 var Promise = require('promise');
 var util = require('util');
-var fs, configurationFile;
-
-configurationFile = 'config.json';
-fs = require('fs');
-
-var config = JSON.parse(fs.readFileSync(configurationFile));
 
 var xkcdbot = new SlackBot({
-  name: config.name,
-  token: config.token
+  name: process.env.TOKEN,
+  token: process.env.name
 });
 
 var params = {
