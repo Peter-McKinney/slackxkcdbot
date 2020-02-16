@@ -53,7 +53,7 @@ app.post('/', async (req, res) => {
 
   res.status(200)
     .contentType('application/json')
-    .send('OK');
+    .send(comic.img);
 });
 
 app.listen(port, function(){
