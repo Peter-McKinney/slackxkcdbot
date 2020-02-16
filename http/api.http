@@ -11,6 +11,15 @@ Content-Type: application/json
 
 ###
 
+POST {{base_url}}
+Content-Type: application/json 
+
+{
+    "token": "xoxb-52933337297-954437190085-kHDp9unydoLpOTReIE1oRgQi",
+    "channel": "botdev",
+    "text": "https://imgs.xkcd.com/comics/further_research_is_needed.png"
+}
+
 GET {{base_url}}/json/randomComic
 Content-Type: application/json
 

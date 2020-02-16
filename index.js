@@ -46,14 +46,13 @@ app.post('/', async (req, res) => {
   console.log(req.body);
   let comic = await xkcd.getCurrentComic();
 
-  slackapi.callAPIMethod('chat.postMessage', {
-    channel: 'botdev',
-    text: comic.img
-  });
-
   res.status(200)
     .contentType('application/json')
-    .send(comic.img);
+    .send({
+      attachments: [{
+        image_url: comic.img
+      }]
+    });
 });
 
 app.listen(port, function(){
