@@ -23,7 +23,7 @@ function getResponseUrl(payload) {
   return payload.response_url;
 }
 
-function getResponsePayload(comic) {
+function getReplacePayload(comic) {
   return JSON.stringify({
     response_type: 'in_channel',
     replace_original: true,
@@ -43,6 +43,82 @@ function getResponsePayload(comic) {
       }
     ]
   });
+}
+
+function getCancelPayload() {
+  return JSON.stringify({
+    response_type: 'ephemeral',
+    delete_original: true
+  });
+}
+
+function getShufflePayload(comic) {
+  return JSON.stringify( {
+    reponseType: 'ephemeral',
+    replace_original: true,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text:  comic.safe_title
+        }
+      },
+      {
+        type: 'image',
+        image_url: comic.img,
+        alt_text: comic.alt
+      }, 
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Would you like to post this comic?'
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Post',
+            emoji: true
+          },
+          value: comic.num.toString()
+        },
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Cancel this message?'
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Cancel',
+            emoji: true
+          },
+          value: 'cancel'
+        },
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Shuffle and find a new comic?'
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Shuffle',
+            emoji: true
+          },
+          value: 'shuffle'
+        },
+      }
+    ]
+   })
 }
 
 app.get('/json/randomComic', async (req, res) => {
@@ -76,11 +152,26 @@ app.post('/event', jsonParser, (req, res) => {
 });
 
 app.post('/postMessage', urlencodedParser, async (req, res) => {
+  console.log(req);
+  let responseUrl = getResponseUrl(req.body.payload);
   let actionValue = getActionValue(req.body.payload);
+
+  if(actionValue == 'cancel') {
+    slackapi.postResponse(responseUrl, getCancelPayload());
+    res.status(200).send();
+    return;
+  }
+
+  if(actionValue == 'shuffle') {
+    let comic = await xkcd.getRandomXkcdComic();
+    slackapi.postResponse(responseUrl, getShufflePayload(comic));
+    res.status(200).send();
+    return;
+  }
+
   let comic = await xkcd.getComicById(actionValue);
 
-  let responseUrl = getResponseUrl(req.body.payload);
-  let responsePayload = getResponsePayload(comic);
+  let responsePayload = getReplacePayload(comic);
 
   slackapi.postResponse(responseUrl, responsePayload);
 
@@ -89,8 +180,14 @@ app.post('/postMessage', urlencodedParser, async (req, res) => {
     .send()
 });
 
-app.post('/', jsonParser, async (req, res) => {
-  let comic = await xkcd.getCurrentComic();
+app.post('/', urlencodedParser, async (req, res) => {
+  let comic;
+
+  if(req.body.text == 'random') {
+    comic = await xkcd.getRandomXkcdComic();
+  } else {
+    comic = await xkcd.getCurrentComic();
+  }
 
   res.status(200)
     .contentType('application/json')
@@ -123,7 +220,39 @@ app.post('/', jsonParser, async (req, res) => {
               emoji: true
             },
             value: comic.num.toString()
-          }
+          },
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'Cancel this message?'
+          },
+          accessory: {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Cancel',
+              emoji: true
+            },
+            value: 'cancel'
+          },
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'Shuffle and find a new comic?'
+          },
+          accessory: {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Shuffle',
+              emoji: true
+            },
+            value: 'shuffle'
+          },
         }
       ]
     }));
