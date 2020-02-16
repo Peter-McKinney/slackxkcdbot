@@ -10,7 +10,7 @@ let port = process.env.PORT || 3000;
 let request = require('request');
 
 let xkcdBaseUrl = 'http://xkcd.com/';
-let infoUrl = xkcdBaseUrl + 'info.0.json';
+let infoUrl = `${xkcdBaseUrl}info.0.json`;
 
 function generateRandomInteger(max) {
   var id = Math.floor((Math.random() * max) + 1);
@@ -60,7 +60,7 @@ async function getRandomXkcdComic() {
   let currentComic = await getCurrentComic();
   let randomId = getRandomComicId(currentComic.num);
 
-  let url = xkcdBaseUrl + randomId + '/info.0.json';
+  let url = `${xkcdBaseUrl}${randomId}/info.0.json`;
   let comic = await getComic(url);
 
   return comic;
@@ -95,6 +95,14 @@ app.post('/event', (req, res) => {
   res.status(200)
     .contentType('application/json')
     .send({challenge: challenge});
+});
+
+app.post('/', (req, res) => {
+  console.log(req.body);
+
+  res.status(200)
+    .contentType('application/json')
+    .send('OK');
 });
 
 app.listen(port, function(){
