@@ -12,9 +12,9 @@ function generateRandomInteger(max) {
 
 function getRandomComicId(max) {
   let randomId = generateRandomInteger(max);
-  
+
   //http://xkcd.com/404 displays a 404 - Not Found error page
-  while(randomId == 404) {
+  while (randomId == 404) {
     randomId = generateRandomInteger(max);
   }
 
@@ -28,7 +28,7 @@ function getCurrentComic() {
         let currentComic = JSON.parse(body);
         resolve(currentComic);
       }
-      catch(error) {
+      catch (error) {
         reject(error);
       }
     });
@@ -36,39 +36,39 @@ function getCurrentComic() {
 }
 
 function getComic(url) {
-    return new Promise((resolve, reject) => {
-      request(url,function(error,result,body){
-        try {
-          let comic = JSON.parse(body);
-          resolve(comic);
-        }
-        catch(e){
-          reject(e);
-        }
-      });
+  return new Promise((resolve, reject) => {
+    request(url, function (error, result, body) {
+      try {
+        let comic = JSON.parse(body);
+        resolve(comic);
+      }
+      catch (e) {
+        reject(e);
+      }
     });
-  }
+  });
+}
 
 async function getComicById(comicId) {
-    let url = `${xkcdBaseUrl}${comicId}/${xkcdInfoUrlPart}`;
+  let url = `${xkcdBaseUrl}${comicId}/${xkcdInfoUrlPart}`;
 
-    let comic = await getComic(url);
-    return comic;
+  let comic = await getComic(url);
+  return comic;
 }
 
 async function getRandomXkcdComic() {
-    let currentComic = await getCurrentComic();
-    let randomId = getRandomComicId(currentComic.num);
-  
-    let url = `${xkcdBaseUrl}${randomId}/${xkcdInfoUrlPart}`;
-    let comic = await getComic(url);
-  
-    return comic;
+  let currentComic = await getCurrentComic();
+  let randomId = getRandomComicId(currentComic.num);
+
+  let url = `${xkcdBaseUrl}${randomId}/${xkcdInfoUrlPart}`;
+  let comic = await getComic(url);
+
+  return comic;
 }
 
 module.exports = {
-    getCurrentComic,
-    getRandomXkcdComic,
-    getRandomComicId,
-    getComicById
+  getCurrentComic,
+  getRandomXkcdComic,
+  getRandomComicId,
+  getComicById
 }
