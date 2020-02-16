@@ -3,9 +3,12 @@ const request = require('request');
 const axios = require('axios');
 const queryString = require('querystring');
 
+const config = {
+    headers: { Authorization: `Bearer ${process.env.SLACK_TOKEN}`}
+};
+
 const callAPIMethod = async (method, payload) => {
-    let data = Object.assign({token: process.env.SLACK_TOKEN}, payload);
-    let result = await axios.post(`${apiUrl}/${method}`, payload);
+    let result = await axios.post(`${apiUrl}/${method}`, payload, config);
     console.log(result, 'slack api result');
     return result.data;
 }

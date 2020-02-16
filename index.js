@@ -80,7 +80,7 @@ async function postMessageToChannel(body) {
   let comic = await xkcd.getComicById(actionValue);
 
   slackapi.callAPIMethod('chat.postMessage', {
-    channel: 'botdev',
+    channel: body.channel.id,
     text: comic.safe_title,
     attachments: [{
       text: comic.alt,
