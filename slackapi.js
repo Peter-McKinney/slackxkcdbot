@@ -1,7 +1,5 @@
 const apiUrl = 'https://slack.com/api';
-const request = require('request');
 const axios = require('axios');
-const queryString = require('querystring');
 
 const config = {
     headers: { Authorization: `Bearer ${process.env.SLACK_TOKEN}`}
