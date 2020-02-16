@@ -1,12 +1,16 @@
 'use strict'
 
-var express = require('express');
-var app = express();
-var port = process.env.PORT || 3000;
-var request = require('request');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-var xkcdBaseUrl = 'http://xkcd.com/';
-var infoUrl = xkcdBaseUrl + 'info.0.json';
+const app = express();
+app.use(bodyParser.json());
+
+let port = process.env.PORT || 3000;
+let request = require('request');
+
+let xkcdBaseUrl = 'http://xkcd.com/';
+let infoUrl = xkcdBaseUrl + 'info.0.json';
 
 function generateRandomInteger(max) {
   var id = Math.floor((Math.random() * max) + 1);
@@ -85,11 +89,12 @@ app.get('/', function(req,res){
 });
 
 app.post('/event', (req, res) => {
+  console.log(req.body, 'request');
   let challenge = req.body.challenge;
 
   res.status(200)
-    .contentType('text/plain')
-    .send(challenge);
+    .contentType('application/json')
+    .send({challenge: challenge});
 });
 
 app.listen(port, function(){

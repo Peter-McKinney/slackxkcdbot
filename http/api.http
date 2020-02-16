@@ -1,0 +1,22 @@
+@base_url = http://localhost:3000
+
+POST {{base_url}}/event
+Content-Type: application/json
+
+{
+    "token": "Jhj5dZrVaK7ZwHHjRyZWjbDl",
+    "challenge": "3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P",
+    "type": "url_verification"
+}
+
+###
+
+GET {{base_url}}/json/randomComic
+Content-Type: application/json
+
+###
+
+GET {{base_url}}/json/currentComic
+Content-Type: application/json
+
+###
