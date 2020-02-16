@@ -49,9 +49,24 @@ app.post('/', async (req, res) => {
   res.status(200)
     .contentType('application/json')
     .send({
+      text: comic.safe_title,
       attachments: [{
+        text: comic.alt,
         image_url: comic.img
-      }]
+      }],
+      actions: [{
+        name: "postMessage",
+        text: "Post",
+        type: "button",
+        value: comic.img
+      },
+      {
+        name: "cancel",
+        text: "Cancel",
+        type: "button",
+        value: "cancel"
+      }
+    ]
     });
 });
 
