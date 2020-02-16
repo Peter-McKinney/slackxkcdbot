@@ -33,15 +33,6 @@ function getCurrentComic() {
   });
 }
 
-async function getRandomXkcdComic() {
-  let currentComic = await getCurrentComic();
-  let randomId = generateRandomInteger(currentComic.num);
-  let url = xkcdBaseUrl + randomId + '/info.0.json';
-  let comic = await requestComic(url);
-
-  return comic;
-}
-
 function requestComic(url) {
   return new Promise((resolve, reject) => {
     request(url,function(error,result,body){
@@ -54,6 +45,15 @@ function requestComic(url) {
       }
     });
   });
+}
+
+async function getRandomXkcdComic() {
+  let currentComic = await getCurrentComic();
+  let randomId = generateRandomInteger(currentComic.num);
+  let url = xkcdBaseUrl + randomId + '/info.0.json';
+  let comic = await requestComic(url);
+
+  return comic;
 }
 
 app.get('/comic/random', async (req, res) => {
