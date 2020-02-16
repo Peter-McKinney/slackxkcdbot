@@ -2,72 +2,17 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const slackapi = require('./slackapi');
+
+const xkcd = require('./xkcd');
 
 const app = express();
 app.use(bodyParser.json());
 
 let port = process.env.PORT || 3000;
-let request = require('request');
-
-let xkcdBaseUrl = 'http://xkcd.com/';
-let infoUrl = `${xkcdBaseUrl}info.0.json`;
-
-function generateRandomInteger(max) {
-  var id = Math.floor((Math.random() * max) + 1);
-  return id;
-}
-
-function getRandomComicId(max) {
-  let randomId = generateRandomInteger(max);
-  
-  //http://xkcd.com/404 displays a 404 - Not Found error page
-  while(randomId == 404) {
-    randomId = generateRandomInteger(max);
-  }
-
-  return randomId;
-}
-
-function getCurrentComic() {
-  return new Promise((resolve, reject) => {
-    request(infoUrl, (error, response, body) => {
-      try {
-        let currentComic = JSON.parse(body);
-        resolve(currentComic);
-      }
-      catch(error) {
-        reject(error);
-      }
-    });
-  });
-}
-
-function getComic(url) {
-  return new Promise((resolve, reject) => {
-    request(url,function(error,result,body){
-      try {
-        let comic = JSON.parse(body);
-        resolve(comic);
-      }
-      catch(e){
-        reject(e);
-      }
-    });
-  });
-}
-
-async function getRandomXkcdComic() {
-  let currentComic = await getCurrentComic();
-  let randomId = getRandomComicId(currentComic.num);
-
-  let url = `${xkcdBaseUrl}${randomId}/info.0.json`;
-  let comic = await getComic(url);
-
-  return comic;
-}
 
 app.get('/json/randomComic', async (req, res) => {
-  let comic = await getRandomXkcdComic();
+  let comic = await xkcd.getRandomXkcdComic();
 
   res.status(200)
     .contentType('application/json')
@@ -75,7 +20,7 @@ app.get('/json/randomComic', async (req, res) => {
 });
 
 app.get('/json/currentComic', async(req, res) => {
-  let comic = await getCurrentComic();
+  let comic = await xkcd.getCurrentComic();
 
   res.status(200)
     .contentType('application/json')
@@ -97,8 +42,14 @@ app.post('/event', (req, res) => {
     .send({challenge: challenge});
 });
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
   console.log(req.body);
+  let comic = await xkcd.getCurrentComic();
+
+  slackapi.callAPIMethod('chat.postMessage', {
+    channel: 'botdev',
+    text: comic.img
+  });
 
   res.status(200)
     .contentType('application/json')
