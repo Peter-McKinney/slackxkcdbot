@@ -10,13 +10,18 @@ var infoUrl = xkcdBaseUrl + 'info.0.json';
 
 function generateRandomInteger(max) {
   var id = Math.floor((Math.random() * max) + 1);
+  return id;
+}
 
+function getRandomComicId(max) {
+  let randomId = generateRandomInteger(max);
+  
   //http://xkcd.com/404 displays a 404 - Not Found error page
-  while(id == 404){
-    id = Math.floor((Math.random() * max) + 1);
+  while(randomId == 404) {
+    randomId = generateRandomInteger(max);
   }
 
-  return id;
+  return randomId;
 }
 
 function getCurrentComic() {
@@ -33,7 +38,7 @@ function getCurrentComic() {
   });
 }
 
-function requestComic(url) {
+function getComic(url) {
   return new Promise((resolve, reject) => {
     request(url,function(error,result,body){
       try {
@@ -49,15 +54,24 @@ function requestComic(url) {
 
 async function getRandomXkcdComic() {
   let currentComic = await getCurrentComic();
-  let randomId = generateRandomInteger(currentComic.num);
+  let randomId = getRandomComicId(currentComic.num);
+
   let url = xkcdBaseUrl + randomId + '/info.0.json';
-  let comic = await requestComic(url);
+  let comic = await getComic(url);
 
   return comic;
 }
 
-app.get('/comic/random', async (req, res) => {
+app.get('/json/randomComic', async (req, res) => {
   let comic = await getRandomXkcdComic();
+
+  res.status(200)
+    .contentType('application/json')
+    .send(JSON.stringify(comic));
+});
+
+app.get('/json/currentComic', async(req, res) => {
+  let comic = await getCurrentComic();
 
   res.status(200)
     .contentType('application/json')
