@@ -13,6 +13,13 @@ const callAPIMethod = async (method, payload) => {
     return result.data;
 }
 
+const postResponse = async(url, payload) => {
+    let result = await axios.post(`${url}`, payload, config);
+    console.log(result, 'slack api request_url result');
+    return result.data;
+}
+
 module.exports = {
-    callAPIMethod
+    callAPIMethod,
+    postResponse
 }

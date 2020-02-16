@@ -2,14 +2,47 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const slackapi = require('./slackapi');
 
 const xkcd = require('./xkcd');
+const slackapi = require('./slackapi');
 
 const app = express();
-app.use(bodyParser.json());
 
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 let port = process.env.PORT || 3000;
+
+function getActionValue(payload) {
+  payload = JSON.parse(payload);
+  console.log(payload.actions[0].value);
+  return payload.actions[0].value;
+}
+
+function getResponseUrl(payload) {
+  payload = JSON.parse(payload);
+  return payload.response_url;
+}
+
+function getResponsePayload(comic) {
+  return JSON.stringify({
+    response_type: 'in_channel',
+    replace_original: true,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: comic.safe_title
+        }
+      },
+      {
+        type: "image",
+        image_url: comic.img,
+        alt_text: comic.alt
+      }
+    ]
+  });
+}
 
 app.get('/json/randomComic', async (req, res) => {
   let comic = await xkcd.getRandomXkcdComic();
@@ -33,7 +66,7 @@ app.get('/', function (req, res) {
     .send('Slack bot app is running...');
 });
 
-app.post('/event', (req, res) => {
+app.post('/event', jsonParser, (req, res) => {
   let challenge = req.body.challenge;
 
   res.status(200)
@@ -41,45 +74,57 @@ app.post('/event', (req, res) => {
     .send({ challenge: challenge });
 });
 
-app.post('/postMessage', async (req, res) => {
-  let actionValue = req.body.actions[0].value;
+app.post('/postMessage', urlencodedParser, async (req, res) => {
+  let actionValue = getActionValue(req.body.payload);
   let comic = await xkcd.getComicById(actionValue);
+
+  let responseUrl = getResponseUrl(req.body.payload);
+  let responsePayload = getResponsePayload(comic);
+
+  slackapi.postResponse(responseUrl, responsePayload);
 
   res.status(200)
     .contentType('application/json')
-    .send({
-      replace_original: true,
-      text: comic.safe_title,
-      attachments: [{
-        text: comic.alt,
-        callback_id: comic.num,
-        image_url: comic.img
-      }]
-    })
-})
+    .send()
+});
 
-app.post('/', async (req, res) => {
+app.post('/', jsonParser, async (req, res) => {
   let comic = await xkcd.getCurrentComic();
 
   res.status(200)
     .contentType('application/json')
-    .send({
-      text: comic.safe_title,
-      attachments: [{
-        text: comic.alt,
-        callback_id: comic.num,
-        image_url: comic.img,
-      },
-      {
-        text: "Post this comic?",
-        actions: [{
-          name: "postMessage",
-          text: "Post",
-          type: "button",
-          value: comic.num
-        }]
-      }],
-    });
+    .send(JSON.stringify({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: comic.safe_title
+          }
+        },
+        {
+          type: "image",
+          image_url: comic.img,
+          alt_text: comic.alt
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'Would you like to post this comic?'
+          },
+          accessory: {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Post',
+              emoji: true
+            },
+            value: comic.num.toString()
+          }
+        }
+      ]
+    }));
 });
 
 app.listen(port, function () {

@@ -1,5 +1,10 @@
 @base_url = http://localhost:3000
 
+POST {{base_url}}
+Content-Type: application/json 
+
+###
+
 POST {{base_url}}/event
 Content-Type: application/json
 
@@ -11,7 +16,7 @@ Content-Type: application/json
 
 ###
 
-POST {{base_url}}
+POST {{base_url}}/postMessage
 Content-Type: application/json
 
 {
