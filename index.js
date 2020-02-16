@@ -34,7 +34,6 @@ app.get('/', function(req,res){
 });
 
 app.post('/event', (req, res) => {
-  console.log(req.body, 'request');
   let challenge = req.body.challenge;
 
   res.status(200)
@@ -43,7 +42,12 @@ app.post('/event', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  console.log(req.body);
+  if(req.body.type == "interactive_message") {
+    postMessageToChannel(req.body);
+    res.status(200);
+    return;
+  }
+
   let comic = await xkcd.getCurrentComic();
 
   res.status(200)
@@ -52,24 +56,36 @@ app.post('/', async (req, res) => {
       text: comic.safe_title,
       attachments: [{
         text: comic.alt,
-        image_url: comic.img
-      }],
-      actions: [{
-        name: "postMessage",
-        text: "Post",
-        type: "button",
-        value: comic.img
+        callback_id: comic.num,
+        image_url: comic.img,
       },
       {
-        name: "cancel",
-        text: "Cancel",
-        type: "button",
-        value: "cancel"
-      }
-    ]
+        text: "Post this comic?",
+        actions: [{
+          name: "postMessage",
+          text: "Post",
+          type: "button",
+          value: comic.num
+        }]
+      }],
     });
 });
 
 app.listen(port, function(){
   console.log('Listing on port ' + port);
 });
+
+async function postMessageToChannel(body) {
+  let actionValue = body.actions[0].value;
+  let comic = await xkcd.getComicById(actionValue);
+
+  slackapi.callAPIMethod('chat.postMessage', {
+    channel: 'botdev',
+    text: comic.safe_title,
+    attachments: [{
+      text: comic.alt,
+      callback_id: comic.num,
+      image_url: comic.img
+    }]
+  });
+}

@@ -1,7 +1,9 @@
-let request = require('request');
+const request = require('request');
 
-let xkcdBaseUrl = 'http://xkcd.com/';
-let infoUrl = `${xkcdBaseUrl}info.0.json`;
+const xkcdBaseUrl = 'http://xkcd.com/';
+const xkcdInfoUrlPart = 'info.0.json';
+const infoUrl = `${xkcdBaseUrl}${xkcdInfoUrlPart}`;
+
 
 function generateRandomInteger(max) {
   var id = Math.floor((Math.random() * max) + 1);
@@ -33,32 +35,40 @@ function getCurrentComic() {
   });
 }
 
+function getComic(url) {
+    return new Promise((resolve, reject) => {
+      request(url,function(error,result,body){
+        try {
+          let comic = JSON.parse(body);
+          resolve(comic);
+        }
+        catch(e){
+          reject(e);
+        }
+      });
+    });
+  }
+
+async function getComicById(comicId) {
+    let url = `${xkcdBaseUrl}${comicId}/${xkcdInfoUrlPart}`;
+
+    let comic = await getComic(url);
+    return comic;
+}
+
 async function getRandomXkcdComic() {
     let currentComic = await getCurrentComic();
     let randomId = getRandomComicId(currentComic.num);
   
-    let url = `${xkcdBaseUrl}${randomId}/info.0.json`;
+    let url = `${xkcdBaseUrl}${randomId}/${xkcdInfoUrlPart}`;
     let comic = await getComic(url);
   
     return comic;
-  }
-
-function getComic(url) {
-  return new Promise((resolve, reject) => {
-    request(url,function(error,result,body){
-      try {
-        let comic = JSON.parse(body);
-        resolve(comic);
-      }
-      catch(e){
-        reject(e);
-      }
-    });
-  });
 }
 
 module.exports = {
     getCurrentComic,
     getRandomXkcdComic,
-    getRandomComicId
+    getRandomComicId,
+    getComicById
 }
