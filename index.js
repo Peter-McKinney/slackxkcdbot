@@ -41,7 +41,7 @@ app.post('/event', (req, res) => {
     .send({ challenge: challenge });
 });
 
-app.post('/postMessage', (req, res) => {
+app.post('/postMessage', async (req, res) => {
   let actionValue = req.body.actions[0].value;
   let comic = await xkcd.getComicById(actionValue);
 
