@@ -27,6 +27,7 @@ function getResponsePayload(comic) {
   return JSON.stringify({
     response_type: 'in_channel',
     replace_original: true,
+    delete_original: true,
     blocks: [
       {
         type: 'section',
@@ -94,6 +95,7 @@ app.post('/', jsonParser, async (req, res) => {
   res.status(200)
     .contentType('application/json')
     .send(JSON.stringify({
+      response_type: 'ephemeral',
       blocks: [
         {
           type: 'section',
