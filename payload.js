@@ -22,7 +22,7 @@ function getReplacePayload(comic) {
                 }
             },
             {
-                type: "image",
+                type: 'image',
                 image_url: comic.img,
                 alt_text: comic.alt
             }
@@ -118,7 +118,7 @@ function getDefaultPayload(comic) {
                 }
             },
             {
-                type: "image",
+                type: 'image',
                 image_url: comic.img,
                 alt_text: comic.alt
             },
@@ -181,4 +181,4 @@ module.exports = {
     getShufflePayload,
     getResponseUrl,
     getReplacePayload
-}
+};

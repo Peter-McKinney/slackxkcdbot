@@ -9,8 +9,8 @@ const payload = require('./payload');
 
 const app = express();
 
-var jsonParser = bodyParser.json()
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+var jsonParser = bodyParser.json();
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 let port = process.env.PORT || 3000;
 
 app.get('/json/randomComic', async (req, res) => {
@@ -35,25 +35,17 @@ app.get('/', function (req, res) {
     .send('Slack bot app is running...');
 });
 
-app.post('/event', jsonParser, (req, res) => {
-  let challenge = req.body.challenge;
-
-  res.status(200)
-    .contentType('application/json')
-    .send({ challenge: challenge });
-});
-
 app.post('/postMessage', urlencodedParser, async (req, res) => {
   let responseUrl = payload.getResponseUrl(req.body.payload);
   let actionValue = payload.getActionValue(req.body.payload);
 
-  if (actionValue == 'cancel') {
+  if (actionValue === 'cancel') {
     slackapi.postResponse(responseUrl, payload.getCancelPayload());
     res.status(200).send();
     return;
   }
 
-  if (actionValue == 'shuffle') {
+  if (actionValue === 'shuffle') {
     let comic = await xkcd.getRandomXkcdComic();
     slackapi.postResponse(responseUrl, payload.getShufflePayload(comic));
     res.status(200).send();
@@ -74,7 +66,7 @@ app.post('/postMessage', urlencodedParser, async (req, res) => {
 app.post('/', urlencodedParser, async (req, res) => {
   let comic;
 
-  if (req.body.text == 'random') {
+  if (req.body.text === 'random') {
     comic = await xkcd.getRandomXkcdComic();
   } else {
     comic = await xkcd.getCurrentComic();
@@ -86,5 +78,5 @@ app.post('/', urlencodedParser, async (req, res) => {
 });
 
 app.listen(port, function () {
-  console.log('Listing on port ' + port);
+
 });

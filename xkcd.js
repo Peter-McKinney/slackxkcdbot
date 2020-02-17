@@ -14,7 +14,7 @@ function getRandomComicId(max) {
   let randomId = generateRandomInteger(max);
 
   //http://xkcd.com/404 displays a 404 - Not Found error page
-  while (randomId == 404) {
+  while (randomId === 404) {
     randomId = generateRandomInteger(max);
   }
 
@@ -71,4 +71,4 @@ module.exports = {
   getRandomXkcdComic,
   getRandomComicId,
   getComicById
-}
+};

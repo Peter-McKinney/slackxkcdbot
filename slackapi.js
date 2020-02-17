@@ -18,4 +18,4 @@ const postResponse = async (url, payload) => {
 module.exports = {
     callAPIMethod,
     postResponse
-}
+};
