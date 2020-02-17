@@ -8,12 +8,12 @@ const config = {
 const callAPIMethod = async (method, payload) => {
     let result = await axios.post(`${apiUrl}/${method}`, payload, config);
     return result.data;
-}
+};
 
 const postResponse = async (url, payload) => {
     let result = await axios.post(`${url}`, payload, config);
     return result.data;
-}
+};
 
 module.exports = {
     callAPIMethod,
