@@ -60,7 +60,7 @@ app.post('/postMessage', urlencodedParser, async (req, res) => {
 
   res.status(200)
     .contentType('application/json')
-    .send()
+    .send();
 });
 
 app.post('/', urlencodedParser, async (req, res) => {
